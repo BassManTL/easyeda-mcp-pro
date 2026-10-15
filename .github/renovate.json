@@ -5,8 +5,8 @@
   "timezone": "Europe/Istanbul",
   "semanticCommits": "enabled",
   "schedule": ["before 6am on monday"],
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2,
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 1,
   "osvVulnerabilityAlerts": true,
   "labels": ["dependencies"],
   "commitMessagePrefix": "chore(deps):",
@@ -19,6 +19,7 @@
     {
       "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true
     },
     {
@@ -38,6 +39,19 @@
       "matchPackageNames": ["typescript", "tsx", "vitest", "vitepress"],
       "groupName": "toolchain dependencies",
       "commitMessageTopic": "toolchain"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["fast-check", "prettier", "globals"],
+      "groupName": "development utility dependencies",
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["node", "pnpm"],
+      "dependencyDashboardApproval": true,
+      "automerge": false
     },
     {
       "matchManagers": ["github-actions"],

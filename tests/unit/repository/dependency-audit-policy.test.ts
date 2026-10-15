@@ -144,6 +144,29 @@ afterEach(() => {
   }
 });
 
+// Security floors, not exact obsolete versions: safe patches must remain upgradable.
+function expectPatchedOverride(
+  workspacePolicy: string,
+  lockfile: string,
+  packageName: string,
+  minimumVersion: string,
+  requireResolved = true,
+) {
+  const prefixes = [packageName + ': ', "'" + packageName + "': ", '"' + packageName + '": '];
+  const line = workspacePolicy
+    .split(/\r?\n/)
+    .find((entry) => prefixes.some((prefix) => entry.trimStart().startsWith(prefix)));
+  const pinnedVersion = line?.split(': ').at(-1)?.trim();
+  expect(pinnedVersion).toMatch(/^\d+\.\d+\.\d+$/);
+  if (!pinnedVersion) return;
+  const [major, minor, patch] = pinnedVersion.split('.').map(Number);
+  const [minMajor, minMinor, minPatch] = minimumVersion.split('.').map(Number);
+  expect(major - minMajor || minor - minMinor || patch - minPatch).toBeGreaterThanOrEqual(0);
+  if (requireResolved) {
+    expect(lockfile).toContain(packageName + '@' + pinnedVersion + ':');
+  }
+}
+
 describe('dependency audit policy', () => {
   it('pins PostCSS to a patched release across the workspace and lockfile', () => {
     const workspacePolicy = readFileSync(resolve(repoRoot, 'pnpm-workspace.yaml'), 'utf8').replace(
@@ -152,8 +175,7 @@ describe('dependency audit policy', () => {
     );
     const lockfile = readFileSync(resolve(repoRoot, 'pnpm-lock.yaml'), 'utf8');
 
-    expect(workspacePolicy).toMatch(/\n {2}postcss: 8\.5\.23\n/);
-    expect(lockfile).toContain('postcss: 8.5.23');
+    expectPatchedOverride(workspacePolicy, lockfile, 'postcss', '8.5.23');
     expect(lockfile).not.toMatch(/postcss@8\.5\.(?:[0-9]|1[0-9]|2[0-2])(?:\D|$)/);
   });
 
@@ -165,9 +187,7 @@ describe('dependency audit policy', () => {
     const lockfile = readFileSync(resolve(repoRoot, 'pnpm-lock.yaml'), 'utf8');
 
     expect(workspacePolicy).not.toContain('  - nanoid@3.3.17\n');
-    expect(workspacePolicy).toMatch(/\n {2}nanoid: 3\.3\.18\n/);
-    expect(lockfile).toContain('nanoid: 3.3.18');
-    expect(lockfile).toContain('nanoid@3.3.18:');
+    expectPatchedOverride(workspacePolicy, lockfile, 'nanoid', '3.3.18');
     expect(lockfile).not.toMatch(/nanoid@3\.3\.(?:1[0-7]|[0-9])(?:\D|$)/);
   });
 
@@ -179,8 +199,7 @@ describe('dependency audit policy', () => {
     const lockfile = readFileSync(resolve(repoRoot, 'pnpm-lock.yaml'), 'utf8');
 
     expect(workspacePolicy).not.toContain('minimumReleaseAge');
-    expect(workspacePolicy).toMatch(/\n {2}brace-expansion: 5\.0\.12\n/);
-    expect(lockfile).toContain('brace-expansion: 5.0.12');
+    expectPatchedOverride(workspacePolicy, lockfile, 'brace-expansion', '5.0.12');
     expect(lockfile).not.toMatch(/brace-expansion@5\.0\.(?:[0-9]|1[01])(?:\D|$)/);
   });
 
@@ -192,9 +211,7 @@ describe('dependency audit policy', () => {
     const lockfile = readFileSync(resolve(repoRoot, 'pnpm-lock.yaml'), 'utf8');
 
     expect(workspacePolicy).not.toContain('minimumReleaseAge');
-    expect(workspacePolicy).toMatch(/\n {2}qs: 6\.16\.0\n/);
-    expect(lockfile).toContain('qs: 6.16.0');
-    expect(lockfile).toContain('qs@6.16.0:');
+    expectPatchedOverride(workspacePolicy, lockfile, 'qs', '6.16.0');
     expect(lockfile).not.toMatch(/qs@6\.15\.3(?:\D|$)/);
   });
 
@@ -205,9 +222,14 @@ describe('dependency audit policy', () => {
     const workspacePolicy = readFileSync(resolve(repoRoot, 'pnpm-workspace.yaml'), 'utf8');
     const lockfile = readFileSync(resolve(repoRoot, 'pnpm-lock.yaml'), 'utf8');
 
-    expect(packageJson.dependencies?.undici).toBe('8.10.2');
-    expect(workspacePolicy).toContain("'undici@6.27.0': 6.28.1");
-    expect(lockfile).toContain('undici@8.10.2:');
+    const directUndici = packageJson.dependencies?.undici;
+    expect(directUndici).toMatch(/^\d+\.\d+\.\d+$/);
+    if (!directUndici) return;
+    const [major, minor, patch] = directUndici.split('.').map(Number);
+    expect(major > 8 || (major === 8 && (minor > 10 || (minor === 10 && patch >= 2)))).toBe(true);
+    // This optional 6.x edge may not be present in the lockfile.
+    expectPatchedOverride(workspacePolicy, lockfile, 'undici@6.27.0', '6.28.1', false);
+    expect(lockfile).toContain('undici@' + directUndici + ':');
     // Parse resolved lockfile entries, not inline overrides; the optional 6.x edge may disappear.
     const resolvedUndici = [
       ...lockfile.matchAll(
