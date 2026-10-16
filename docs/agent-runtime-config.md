@@ -61,6 +61,26 @@ For HTTP transport, use an explicit transport environment:
 TRANSPORT=http HTTP_HOST=127.0.0.1 HTTP_PORT=3000 npx easyeda-mcp-pro
 ```
 
+## Component datasheet, footprint and model review
+
+Use `skills/easyeda-component-review/SKILL.md` to review a design component against
+its manufacturer drawing and actual bound assets, then save scoped results and
+structured evidence through `easyeda_library_update_device_metadata`. Runtime
+wrappers are included for Codex, Agents, Claude and OpenCode; the canonical folder
+also contains dependency-free Node helpers and the evidence contract.
+
+Example request:
+
+```text
+Use $easyeda-component-review to review J1 in this design against its manufacturer
+datasheet, check its footprint and actual 3D model, and save the findings and
+evidence in my Personal library. Leave missing checks incomplete.
+```
+
+The metadata tool is available in core. Some native asset/copy/export operations
+need additional documented capabilities or a manual native export; the skill
+reports those limitations rather than enabling a broader profile silently.
+
 ## Verify feature maturity
 
 Before relying on an optional capability, call `easyeda_get_feature_flags` or

@@ -130,7 +130,7 @@
     "check:environment-metadata": "tsx scripts/generate-server-environment.mts --check",
     "lint:server": "eslint src tests vitest.config.ts --max-warnings 0",
     "lint:extension": "eslint easyeda-bridge-extension/src easyeda-bridge-extension/tests easyeda-bridge-extension/scripts --max-warnings 0",
-    "lint:scripts": "eslint scripts eslint.config.js --max-warnings 0"
+    "lint:scripts": "eslint scripts skills eslint.config.js --max-warnings 0"
   },
   "dependencies": {
     "@modelcontextprotocol/node": "^2.0.0",

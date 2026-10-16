@@ -50,6 +50,7 @@ const javascriptAutomationFiles = [
   'scripts/**/*.mjs',
   'scripts/**/*.cjs',
   'easyeda-bridge-extension/scripts/**/*.mjs',
+  'skills/**/scripts/**/*.mjs',
 ];
 
 export default tseslint.config(

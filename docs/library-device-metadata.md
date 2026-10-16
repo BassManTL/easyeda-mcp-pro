@@ -117,6 +117,25 @@ It includes references, not referenced file contents, and is not an approval tok
 
 ## Review guidance and evidence
 
+For the reusable AI datasheet/footprint/model workflow, use
+`skills/easyeda-component-review/SKILL.md`. Its local helpers compute explicit
+measurement checks, retain source/artifact hashes and generate preview/apply
+requests. Structured findings and citations are saved directly in chunked Personal
+Device properties and can be reconstructed after readback. Raw PDFs and geometry
+remain in a private evidence folder. The workflow records incomplete/failed checks
+honestly and does not invent missing geometry or infer engineering approval.
+
+The workflow storage path was exercised on the same disposable C164170 copy on
+Windows/EasyEDA 3.2.206 with server and extension 1.2.1. A raw-JSON chunk trial
+failed verification because native save trimmed chunk-edge spaces. The helper now
+uses UTF-8/base64url encoding; all 17 encoded parts reconstructed to the original
+canonical JSON SHA-256 after verified apply and a separate fresh native preview.
+The 12,287-byte thumbnail, unrequested fields and asset references/transform were
+preserved. This record deliberately remained `Incomplete`: it replayed retained
+measurements and did not claim fresh all-contact or asset-content validation.
+Private native payloads and library identifiers remain local. This demonstrates
+evidence storage, not universal model acquisition or component approval.
+
 Inspect the datasheet, actual footprint and actual bound model before recording
 review claims. Use scoped fields such as Review Status, Review Date, Review Scope,
 Review Source and Review Notes. Record remaining hinge/service, shell-ground or

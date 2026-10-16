@@ -1,0 +1,4 @@
+interface:
+  display_name: 'EasyEDA Component Review'
+  short_description: 'Check footprints and models; save review evidence'
+  default_prompt: 'Use $easyeda-component-review to check the selected design component against its manufacturer datasheet and save scoped findings and evidence in my Personal library.'

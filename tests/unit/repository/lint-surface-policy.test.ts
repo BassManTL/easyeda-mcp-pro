@@ -33,7 +33,7 @@ describe('repository lint surface policy', () => {
       'lint:server': 'eslint src tests vitest.config.ts --max-warnings 0',
       'lint:extension':
         'eslint easyeda-bridge-extension/src easyeda-bridge-extension/tests easyeda-bridge-extension/scripts --max-warnings 0',
-      'lint:scripts': 'eslint scripts eslint.config.js --max-warnings 0',
+      'lint:scripts': 'eslint scripts skills eslint.config.js --max-warnings 0',
       'lint:tools': 'tsx scripts/lint-tool-metadata.mts',
     });
     expect(packageJson.scripts['verify:fast']).toContain('pnpm lint');
@@ -56,21 +56,25 @@ describe('repository lint surface policy', () => {
     expect(config?.rules?.['@typescript-eslint/no-floating-promises']?.[0]).toBe(2);
   });
 
-  it('rejects shell-string child process APIs in JavaScript automation', async () => {
-    const relativePath = join('scripts', fixtureName('shell-process', 'mjs'));
-    const messages = await lintTemporaryFile(
-      relativePath,
-      [
-        'import { exec',
-        "Sync } from 'node:child_",
-        "process';\n",
-        'exec',
-        "Sync('echo unsafe');\n",
-      ].join(''),
-    );
+  it.each(['scripts', 'skills/easyeda-component-review/scripts'])(
+    'rejects shell-string child process APIs in %s',
+    async (surface) => {
+      const relativePath = join(surface, fixtureName('shell-process', 'mjs'));
+      const messages = await lintTemporaryFile(
+        relativePath,
+        [
+          'import { exec',
+          "Sync } from 'node:child_",
+          "process';\n",
+          'exec',
+          "Sync('echo unsafe');\n",
+        ].join(''),
+      );
 
-    expect(messages.map((message) => message.ruleId)).toContain('no-restricted-imports');
-  }, 20_000);
+      expect(messages.map((message) => message.ruleId)).toContain('no-restricted-imports');
+    },
+    20_000,
+  );
 
   it('rejects path concatenation in JavaScript automation', async () => {
     const relativePath = join('scripts', fixtureName('path-concat', 'cjs'));
