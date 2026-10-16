@@ -1,3 +1,8 @@
+> **First-time contributor?** Please fill in **Summary** and **Validation**
+> below, and mention any risks you know about. The maintainer handles the
+> critical-path, security, bot-review, and release checklists. No forms,
+> external sign-up, or per-commit DCO sign-off are required.
+
 ## Summary
 
 <!-- What changed and why? Keep the scope focused. -->
@@ -15,6 +20,14 @@
 - Critical paths and owners: <!-- paths + @owner -->
 - Independent human reviewer: <!-- reviewer, or explain the documented solo-maintainer enforcement limitation -->
 - Author self-review evidence: <!-- permissions, secrets, fork behavior, mutation/release impact, rollback -->
+
+## External contributions
+
+No paperwork or per-commit DCO sign-off. For your first **substantial** code
+contribution, a maintainer will ask you to accept the short
+[one-time contributor permission](https://github.com/oaslananka/easyeda-mcp-pro/blob/main/CONTRIBUTOR-LICENSING.md) in a PR comment.
+Trivial changes and automated dependency PRs are exempt; returning contributors
+do not repeat acceptance.
 
 ## Validation
 
