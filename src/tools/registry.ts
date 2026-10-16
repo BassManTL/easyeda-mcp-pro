@@ -126,6 +126,7 @@ export function getRequiredToolScopes(tool: ToolDefinition): string[] {
   }
   if (tool.group === 'bom') return [tool.name.includes('sourcing') ? 'bom:source' : 'bom:read'];
   if (tool.group === 'catalog') return [tool.confirmWrite ? 'catalog:write' : 'catalog:read'];
+  if (tool.group === 'library') return [tool.confirmWrite ? 'library:write' : 'library:read'];
   if (tool.group === 'project') return [tool.confirmWrite ? 'project:write' : 'project:read'];
   return [tool.confirmWrite ? WRITE_ALL_SCOPE : READ_ALL_SCOPE];
 }
