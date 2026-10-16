@@ -9,6 +9,19 @@ import {
 
 function createDependencies() {
   return {
+    deviceMetadataOperations: {
+      updateDeviceMetadata: vi.fn(async () => ({
+        status: 'preview' as const,
+        writeOutcome: 'not_attempted' as const,
+        libraryUuid: '',
+        deviceUuid: '',
+        verified: false,
+        requested: {},
+        changedFields: [],
+        preservationChecks: [],
+        errors: [],
+      })),
+    },
     projectOperations: {
       open: vi.fn(async (params: Record<string, unknown>) => ({ method: 'project.open', params })),
       save: vi.fn(async (_params: Record<string, unknown>) => undefined),
@@ -217,6 +230,7 @@ const expectedMethods = [
   'inventory.getPrice',
   'inventory.search',
   'library.getDeviceByLcscId',
+  'library.updateDeviceMetadata',
   'pcb.addSilkscreenLine',
   'pcb.addText',
   'pcb.addTrack',

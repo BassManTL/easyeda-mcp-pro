@@ -39,6 +39,7 @@ These tools are profile-gated. Set the `TOOL_PROFILE` environment variable to en
 | `easyeda_get_tool_profiles`                        | `core`  | `low`    | List available tool profiles and their descriptions.                                                                                                                                                                                                                                                                             |
 | `easyeda_health_check`                             | `core`  | `low`    | Return server health status in one call: runtime version, active profile, bridge state, EasyEDA version, keyless sourcing state, and starter catalog size. Intended as the single actionable status check after first connecting the bridge extension.                                                                           |
 | `easyeda_jlcpcb_quote_workflow`                    | `pro`   | `medium` | Prepare a non-binding JLCPCB quote workflow snapshot with explicit human-review gates and audit evidence. This tool never places orders or performs paid operations.                                                                                                                                                             |
+| `easyeda_library_update_device_metadata`           | `core`  | `medium` | Preview/apply string-valued Personal Device properties with explicit thumbnail reinsertion. Requires preview fingerprint, image hash and confirmWrite. Verifies saved metadata, identical image bytes and preserved fields. Limited to EasyEDA 3.2.206; never infers engineering approval.                                       |
 | `easyeda_live_smoke_report`                        | `dev`   | `low`    | Run a read-only live smoke report against the connected EasyEDA bridge and return status, API inventory, components, wires, and schematic nets in one response.                                                                                                                                                                  |
 | `easyeda_live_write_regression`                    | `dev`   | `medium` | Exercise real schematic (and optionally PCB) write paths against the bridge — place, connect, wire, delete — reporting pass/fail per step, then clean up its own scratch primitives. Needs a test device from schematic_search_device and the matching tab focused.                                                              |
 | `easyeda_observability_report`                     | `core`  | `low`    | Return latency budgets, runtime metrics, cache/vendor timing snapshot, and storage retention policy for performance diagnostics.                                                                                                                                                                                                 |
@@ -1160,6 +1161,51 @@ Returns a JSON object matching the schema:
   audit: object;
   summary: string;
   unsupported_operations: string[];
+}
+```
+
+---
+
+## `easyeda_library_update_device_metadata`
+
+**Profile:** `core` | **Risk Level:** `medium`
+
+> Preview/apply string-valued Personal Device properties with explicit thumbnail reinsertion. Requires preview fingerprint, image hash and confirmWrite. Verifies saved metadata, identical image bytes and preserved fields. Limited to EasyEDA 3.2.206; never infers engineering approval.
+
+### Input Parameters
+
+| Parameter                 | Type                                                          | Required | Description |
+| ------------------------- | ------------------------------------------------------------- | -------- | ----------- |
+| `libraryUuid`             | `string`                                                      | Yes      |             |
+| `deviceUuid`              | `string`                                                      | Yes      |             |
+| `properties`              | `Record<string, string>`                                      | Yes      |             |
+| `expectedFingerprint`     | `string (optional)`                                           | No       |             |
+| `thumbnailPolicy`         | `'reinsert-existing' (optional)`                              | No       |             |
+| `expectedThumbnailSha256` | `string (optional)`                                           | No       |             |
+| `mode`                    | `'preview'` \| `'apply'`                                      | Yes      |             |
+| `confirmWrite`            | `boolean (optional)`                                          | No       |             |
+| `writeMode`               | `'plan'` \| `'preview'` \| `'apply'` \| `'verify' (optional)` | No       |             |
+
+### Output Format
+
+Returns a JSON object matching the schema:
+
+```ts
+{
+  libraryUuid: string;
+  deviceUuid: string;
+  status: 'preview' | 'unchanged' | 'verified' | 'rejected' | 'uncertain' | 'verification_failed';
+  writeOutcome: 'not_attempted' | 'acknowledged' | 'rejected' | 'unknown';
+  verified: boolean;
+  requested: object;
+  saved: object (optional);
+  fingerprintBefore: string (optional);
+  fingerprintAfter: string (optional);
+  runtimeVersion: string (optional);
+  thumbnail: object (optional);
+  changedFields: string[];
+  preservationChecks: object[];
+  errors: object[];
 }
 ```
 

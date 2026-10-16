@@ -681,6 +681,7 @@ describe('ToolRegistry', () => {
           'pcb-write',
           'visual',
           'catalog',
+          'library',
           'design-rules',
           'workflows',
           'simulation',

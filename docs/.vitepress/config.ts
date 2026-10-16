@@ -25,6 +25,7 @@ export default defineConfig({
       { text: 'JLCPCB Quote Workflow', link: '/jlcpcb-quote-workflow' },
       { text: 'Component Quality', link: '/component-quality' },
       { text: 'Catalog Ingestion', link: '/catalog-ingestion' },
+      { text: 'Personal Device Metadata', link: '/library-device-metadata' },
       { text: 'Issue Triage', link: '/ISSUE_TRIAGE' },
     ],
     sidebar: [

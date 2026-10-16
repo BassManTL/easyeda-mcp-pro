@@ -6,12 +6,14 @@ import type { PcbMutationOperations } from './pcb-mutation-operations.js';
 import type { PcbReadOperations } from './pcb-read-operations.js';
 import type { PcbWriteOperations } from './pcb-write-operations.js';
 import type { ProjectOperations } from './project-operations.js';
+import type { createDeviceMetadataOperations } from './device-metadata-operations.js';
 import type { ReadOnlyOperations } from './read-only-operations.js';
 import type { SchematicTransactionOperations } from './schematic-transaction-operations.js';
 import { assertSchematicReadOperationScope } from './schematic-read-scope.js';
 import type { SystemApiOperations } from './system-api-operations.js';
 
 export interface DispatcherDomainRouterDependencies {
+  deviceMetadataOperations: ReturnType<typeof createDeviceMetadataOperations>;
   projectOperations: ProjectOperations;
   readOnlyOperations: ReadOnlyOperations;
   schematicTransactionOperations: SchematicTransactionOperations;
@@ -68,6 +70,10 @@ export function createDispatcherDomainRouter(
     handle: (params) => read(optionalNumber(params.limit), offsetNumber(params.offset)),
   }));
   const routes = [
+    {
+      method: 'library.updateDeviceMetadata',
+      handle: (params) => dependencies.deviceMetadataOperations.updateDeviceMetadata(params),
+    },
     { method: 'api.call', handle: (params) => dependencies.systemApiOperations.apiCall(params) },
     {
       method: 'api.execute',

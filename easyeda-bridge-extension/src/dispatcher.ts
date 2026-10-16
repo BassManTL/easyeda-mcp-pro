@@ -7,6 +7,7 @@
 // baked into the extension script scope and eval'd via AsyncFunction.
 
 import { createApiRuntime, type ApiRuntime } from './api-runtime.js';
+import { createDeviceMetadataOperations } from './device-metadata-operations.js';
 import {
   compactPrimitiveSummary,
   normalizeStandalone,
@@ -85,6 +86,7 @@ const METHOD_LIST: readonly string[] = [
   'inventory.getPrice',
   'inventory.search',
   'library.getDeviceByLcscId',
+  'library.updateDeviceMetadata',
   'pcb.addSilkscreenLine',
   'pcb.addText',
   'pcb.addTrack',
@@ -1978,6 +1980,7 @@ export function createDispatcher(toolkit: DispatcherToolkit): Dispatcher {
     logRecoverableError,
   });
   domainRouter = createDispatcherDomainRouter({
+    deviceMetadataOperations: createDeviceMetadataOperations({ callFirst, readFirstPath }),
     projectOperations,
     readOnlyOperations,
     schematicTransactionOperations,

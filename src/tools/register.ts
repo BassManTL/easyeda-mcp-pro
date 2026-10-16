@@ -3,6 +3,7 @@ import { registerBoardTools } from './L1_board.js';
 import { registerBomCoreTools } from './L1_bom_core.js';
 import { registerBomSourcingTools } from './L1_bom_sourcing.js';
 import { registerCatalogTools } from './L1_catalog.js';
+import { registerLibraryTools } from './L1_library.js';
 import { registerDesignRulesTools } from './L1_design_rules.js';
 import { registerDiagnosticsCore } from './L0_diagnostics_core.js';
 import { registerDiagnosticsApi } from './L0_diagnostics_api.js';
@@ -39,6 +40,7 @@ export function registerBuiltinTools(registry: ToolRegistry, config: EnvConfig):
   registerExportTools(registry, config);
   registerVisualTools(registry, config);
   registerCatalogTools(registry, config);
+  registerLibraryTools(registry);
   registerDesignRulesTools(registry, config);
   registerWorkflowTools(registry, config);
   registerSchematicLayoutTools(registry, config);
