@@ -99,7 +99,11 @@ export async function retainThumbnail(
   url = requireThumbnailUrl(url);
   if (typeof fetchImage !== 'function')
     fail('THUMBNAIL_DOWNLOAD_FAILED', 'Image download capability is unavailable.');
-  const controller = new AbortController();
+  // EasyEDA shadows some bare browser constructors in the extension scope.
+  const Controller = globalThis.AbortController;
+  if (typeof Controller !== 'function')
+    fail('THUMBNAIL_DOWNLOAD_FAILED', 'Bounded image download capability is unavailable.');
+  const controller = new Controller();
   const timer = setTimeout(() => controller.abort(), 3500);
   try {
     const response = await fetchImage(url, {
